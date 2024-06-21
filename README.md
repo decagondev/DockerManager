@@ -34,4 +34,13 @@ if __name__ == "__main__":
     # Run an Express.js app
     container_id = manager.run_express_app(image_id, '/path/to/express/app', port_mapping={'3000/tcp': 3000})
     print(f'Container ID (Express App): {container_id}')
+
+    # Run ai agent
+    image_id, _ = docker_manager.build_image('openai-agent-image')
+
+    agent_script_path = '/path/to/your/agent_script.py'
+    openai_api_key = 'your-openai-api-key'
+
+    container_id = docker_manager.run_openai_agent(image_id, agent_script_path, openai_api_key)
+    print(f"OpenAI agent is running in container: {container_id}")
 ```
