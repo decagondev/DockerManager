@@ -67,6 +67,34 @@ class DockerManager:
         container_id = self.run_image(image_id, command=command, ports=port_mapping, volumes=volumes)
         return container_id
 
+    def run_openai_agent(self, image_id, agent_script, openai_api_key, port_mapping=None):
+        volumes = {
+            os.path.abspath(agent_script): {
+                'bind': '/app/agent.py',
+                'mode': 'ro',
+            }
+        }
+        
+        environment = {
+            'OPENAI_API_KEY': openai_api_key
+        }
+        
+        command = 'python /app/agent.py'
+        
+        if port_mapping is None:
+            port_mapping = {'8000/tcp': 8000}
+        
+        container = self.client.containers.run(
+            image_id,
+            command=command,
+            ports=port_mapping,
+            volumes=volumes,
+            environment=environment,
+            detach=True
+        )
+        
+        return container.id
+
     def run_express_app(self, image_id, app_directory, port_mapping=None):
         volumes = {
             os.path.abspath(app_directory): {
